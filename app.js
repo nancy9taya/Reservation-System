@@ -5,14 +5,6 @@
   const mongoose = require("mongoose");
   const userRoutes = require('./routes/user');
   const cors=require('cors');
-  const {MongoClient} = require('mongodb');
- const connectDB = require('./DB/Connection');
-
-connectDB();
-const Port = process.env.Port || 1000;
-
-app.listen(Port,()=>console.log("server started"));
-
 
  //let db="mongodb+srv://maestroApplication:BACk1ENd1@cluster0-zwzxg.mongodb.net/MaestroApp?retryWrites=true&w=majority"
  let db="mongodb://localhost/MaestroApp"
