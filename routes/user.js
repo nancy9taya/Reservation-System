@@ -4,7 +4,7 @@ const router = express.Router();
 const UserController = require('../controllers/userControllers');
 const checkAuth = require('../middleware/checkAuth');
 
-
+//NANNNNNCYYYYY NEED TO RETURN WHEN USER CREATED THE TYPE OF THE USER
 router.post("/signup", UserController.userSignup);
 router.post("/login", UserController.userLogin);
 router.delete("/:id",checkAuth, UserController.userDelete);

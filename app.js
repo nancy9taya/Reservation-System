@@ -4,6 +4,7 @@
   const bodyParser = require("body-parser");
   const mongoose = require("mongoose");
   const userRoutes = require('./routes/user');
+  const matchRoutes = require('./routes/match');
   const cors=require('cors');
 
  //let db="mongodb+srv://maestroApplication:BACk1ENd1@cluster0-zwzxg.mongodb.net/MaestroApp?retryWrites=true&w=majority"
@@ -57,6 +58,7 @@
 
 
   app.use("/user", userRoutes);
+  app.use("/match", matchRoutes);
 
   
   app.use((req, res, next) => {
