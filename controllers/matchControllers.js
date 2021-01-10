@@ -37,12 +37,8 @@ exports.EditExistingEvent = async function(req, res, next) {
 
 };
 
-exports.EditExistingEvent = async function(req, res, next) {
+exports.FindExistingEvent = async function(req, res, next) {
     let match = await Event.findOne({MatchID:req.params.id }, {'_id':0,'MatchID':0})
     return res.send(match);
-
-
-
-
 
 };

@@ -5,6 +5,7 @@
   const mongoose = require("mongoose");
   const userRoutes = require('./routes/user');
   const matchRoutes = require('./routes/match');
+  const administratorRoutes = require('./routes/administrator');
   const cors=require('cors');
 
  //let db="mongodb+srv://maestroApplication:BACk1ENd1@cluster0-zwzxg.mongodb.net/MaestroApp?retryWrites=true&w=majority"
@@ -20,9 +21,13 @@
     //const mongoConnectionSettings = config.read();
    // const migrated = up(db, client);
     //migrated.forEach(fileName => console.log('Migrated:', fileName));
+    const URI =  "mongodb+srv://arwa:projectconsultation@cluster0.kimgs.mongodb.net/ReservationSystem?retryWrites=true&w=majority";
+    // mongoose.connect(URI,{useUnifiedTopology: true, useNewUrlParser: true })
+    // console.log('db connected.. !')
+    
+    
  
- 
-  mongoose.connect(db, { useNewUrlParser: true ,useUnifiedTopology: true ,useCreateIndex: true  }).
+  mongoose.connect(URI, { useNewUrlParser: true ,useUnifiedTopology: true ,useCreateIndex: true  }).
   catch(error => handleError(error));
   mongoose.set('useFindAndModify', false);
 
@@ -59,6 +64,7 @@
 
   app.use("/user", userRoutes);
   app.use("/match", matchRoutes);
+  app.use("/adm", administratorRoutes);
 
   
   app.use((req, res, next) => {

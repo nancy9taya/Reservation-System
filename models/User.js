@@ -61,6 +61,14 @@ const userSchema = mongoose.Schema({
   phone:{
     type: String,
     default: null
+  },
+  role:{
+    type: String,
+    default: null
+  },
+  approvalRequest:{
+    type: String,
+    default: null
   }
 });
 

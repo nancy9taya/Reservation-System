@@ -13,6 +13,7 @@ const RandHash =require('../models/RandHash');// put randam hash in url in verif
 var randomHash = require('random-key');
 var mailOptions;
 const rand =new RandHash;
+const RequestController=require('../controllers/administratorController')
 
 
 /**
@@ -38,7 +39,8 @@ const schema = {
     Joi.date().required().min('1-1-1900').iso(),
     gender:
     Joi.boolean().required(),
-
+    role:
+    Joi.string()
 }
 	return Joi.validate(req, schema);
 };
@@ -117,15 +119,33 @@ exports.userSignup =   (req, res, next) => {
                  return res.status(500).send({ msg: 'Unable to send email' });     
                  
               }else{
-                     //here that the message send successfulyy so the user can sign up  
-                     const user = new User({
-                       _id: new mongoose.Types.ObjectId(),
-                       name:req.body.name,
-                       email: req.body.email,
-                       password: hash,
-                       birthDate:req.body.birthDate,
-                       gender:req.body.gender,
-                     });
+                     //here that the message send successfulyy so the user can sign up
+                     let user  
+                     if (req.body.role=="Manager"){ // EFA Manager
+                       user = new User({
+                        _id: new mongoose.Types.ObjectId(),
+                        name:req.body.name,
+                        email: req.body.email,
+                        password: hash,
+                        birthDate:req.body.birthDate,
+                        gender:req.body.gender,
+                        role:req.body.role,
+                        approvalRequest:"Pending"
+                      });
+                      RequestController.CreateNewRequest(req.body.name)
+                    }else{ //FAN
+                        user = new User({
+                        _id: new mongoose.Types.ObjectId(),
+                        name:req.body.name,
+                        email: req.body.email,
+                        password: hash,
+                        birthDate:req.body.birthDate,
+                        gender:req.body.gender,
+                        role:req.body.role,
+                        approvalRequest:"N/A"
+                      });
+
+                    }
                      rand.userId=user._id;//to use it back in verify mail
                      rand.save().then().catch();
                      user.appId = randomHash.generate(30);
@@ -139,7 +159,10 @@ exports.userSignup =   (req, res, next) => {
                      user
                        .save()
                        .then(result => {
-                         console.log(result);
+                        console.log(result);
+                        // if (req.body.role=="Manager"){ // EFA Manager then add new request for approving
+                        //   RequestController.CreateNewRequest(req.body.name,result.appId)
+                        // }
                          res.status(201).json({
                            message: 'User created',
                            token: token
