@@ -130,7 +130,7 @@ exports.userSignup =   (req, res, next) => {
                         birthDate:req.body.birthDate,
                         gender:req.body.gender,
                         role:req.body.role,
-                        approvalRequest:"Pending"
+                        status:"Pending"
                       });
                       RequestController.CreateNewRequest(req.body.name)
                     }else{ //FAN
@@ -142,7 +142,7 @@ exports.userSignup =   (req, res, next) => {
                         birthDate:req.body.birthDate,
                         gender:req.body.gender,
                         role:req.body.role,
-                        approvalRequest:"N/A"
+                        status:"N/A"
                       });
 
                     }

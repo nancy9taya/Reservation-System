@@ -7,7 +7,7 @@ const requestSchema = new mongoose.Schema({
     //   type: String ,
     //   default: null
     // },
-    userName: {
+    name: {
       type: String,
       text:true
     }

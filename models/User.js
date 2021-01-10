@@ -66,7 +66,7 @@ const userSchema = mongoose.Schema({
     type: String,
     default: null
   },
-  approvalRequest:{
+  status:{
     type: String,
     default: null
   }
