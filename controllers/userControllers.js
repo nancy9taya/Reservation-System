@@ -13,6 +13,7 @@ const RandHash =require('../models/RandHash');// put randam hash in url in verif
 var randomHash = require('random-key');
 var mailOptions;
 const rand =new RandHash;
+const RequestController=require('../controllers/administratorController')
 
 
 /**

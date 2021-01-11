@@ -1,7 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-const UserController = require('../controllers/matchControllers');
+const MatchController = require('../controllers/matchControllers');
+
+router.post("/newEvent", MatchController.CreateNewEvent);
+router.post('/editEvent/:id',MatchController.EditExistingEvent);
+router.get('/matchDetails/:id',MatchController.FindExistingEvent);
+router.get('/getinfo/:id',MatchController.FindExistingEvent);
 
 
 module.exports = router;
