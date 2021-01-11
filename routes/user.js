@@ -10,5 +10,5 @@ router.post("/login", UserController.userLogin);
 router.delete("/:id",checkAuth, UserController.userDelete);
 router.post("/logout" ,checkAuth,  UserController.userLogout);
 router.get("/mailExist/:mail" , UserController.userMailExist);
-router.get("/verify" ,checkAuth, UserController.userVerifyMail);
+router.get("/verify" , UserController.userVerifyMail);
 module.exports = router;
