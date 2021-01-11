@@ -8,17 +8,25 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true
   },
+  firstName:{
+    type: String,
+    required: true
+  },
+  lastName:{
+    type: String,
+    required: true
+  },
   email: {
     type: String,
     lowercase: true,
     trim: true,
     required: true,
     minlength: 5,
-    maxlength: 128,
-    unique: true
+    maxlength: 128
   },
   password: {
-    type: String
+    type: String,
+    required: true
   },
   createdAt: {
     type: Date,
@@ -32,43 +40,32 @@ const userSchema = mongoose.Schema({
     type: Boolean,
     required: true
   },
-  appId:{
-    type: String ,
-    default: null
-  },
-  providInfo:{
-    type: Boolean,
-    default: false
-  },
-  country:{
+  city:{
     type: String,
-    default: 'Egypt'
-  },
-  type:{
-    //three types: free artist premium
-    type: String,
-    default: 'free'
+    default: 'Cairo',
+    required: true
   },
   active:{
     type: Boolean,
     default: false
   },
-
  token:{
     type: String,
     default: null
   },
-  phone:{
+  address:{
     type: String,
-    default: null
+    default: null,
+
   },
   role:{
-    type: String,
-    default: null
+    type: String,//Manger / Fan 
+    required: true,
+    default: "null"
   },
   status:{
-    type: String,
-    default: null
+    type:String,
+    default: "Approved"
   }
 });
 

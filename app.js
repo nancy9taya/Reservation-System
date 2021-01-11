@@ -8,8 +8,9 @@
   const administratorRoutes = require('./routes/administrator');
   const cors=require('cors');
 
- //let db="mongodb+srv://maestroApplication:BACk1ENd1@cluster0-zwzxg.mongodb.net/MaestroApp?retryWrites=true&w=majority"
- let db="mongodb://localhost/MaestroApp"
+ let db =  "mongodb+srv://arwa:projectconsultation@cluster0.kimgs.mongodb.net/ReservationSystem?retryWrites=true&w=majority";
+ 
+ //let db="mongodb://localhost/MaestroApp"
   /* mongoose
     .connect(db, {
       useCreateIndex: true,
@@ -41,10 +42,6 @@
   app.use(bodyParser.json());
   app.use(cors());
 
-  /*app.use(cors({
-   origin:"http://3.137.69.49/",
-   credentials:true
-  }))*/
   
   app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
