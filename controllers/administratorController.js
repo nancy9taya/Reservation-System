@@ -19,7 +19,7 @@ exports.getAllRequests = async function(req, res) {
 
 exports.getAllUsers = async function(req, res) {
     //we need to add Firstname, LastName,City,Address
-    let users = await User.find({},{_id:0,name:1,gender:1,birthDate:1,role:1,email:1,status:1})
+    let users = await User.find({},{_id:0,name:1,role:1,email:1,status:1})
     return res.send(users);
 
 };
