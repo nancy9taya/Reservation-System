@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const Request = require('../models/Request');
 const User = require('../models/User')
+const jwt = require('jsonwebtoken');
+const env = require('dotenv').config();
+
 
 async function createRequest (name){
     console.log("CReating new recuest")
@@ -36,16 +39,46 @@ exports.removeUser = async function(req, res) {
 
 };
 exports.approveRequest = async function(req, res) {
-    let username = req.params.username;
-    await User
-    .updateOne({name:username},{'status':"Approved"} );
-
-    await Request
-    .deleteOne({name:username});
-
-    return res.status(200).json({
-      message: 'Approval Successful'
-    });
-
+   let username = req.params.username;
+   await Request.deleteOne({name:username});
+   var token
+    User.findOne({ name: username })
+    .exec()
+     .then(user => {
+         console.log(user)
+       if (user.length < 1) {
+         return res.status(409).json({
+           message: 'Username doesnot exist'
+         });
+       }  
+       else {       
+            token = jwt.sign(
+            { _id: user._id,
+                name: user.name, 
+            },
+            process.env.JWTSECRET
+            );
+         }
+         User.updateOne({name:username},{token: token,status:"approved"})
+            .exec()
+            .then(result =>{
+               return res.status(201).json({
+                    message: 'Approval Successful',
+                    token: token
+                });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                error: err
+                });
+            });     
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+          error: err
+        });
+   });  
 
 };

@@ -1,7 +1,7 @@
 /**
 *@module controllers/userControllers
 */
-
+const getOID = require('../middleware/getOID');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');//this used for hashing the passwords to provide more secuirty
 const jwt = require('jsonwebtoken');
@@ -28,33 +28,54 @@ const RequestController=require('../controllers/administratorController')
 */
 
  function joiValidate (req) {
-const schema = {
-    name: 
-    Joi.string().min(3).max(30).required(),
-    firstName:
-    Joi.string().min(3).max(30).required(),
-    lastName:
-    Joi.string().min(3).max(30).required(),
-    email: 
-    Joi.string().email().lowercase().required(),
-    password: 
-    Joi.string().min(8).max(80).alphanum().required(),
-    birthDate:
-    Joi.date().required().min('1-1-1900').iso(),
-    gender:
-    Joi.boolean().required(),
-    city:
-    Joi.string().min(3).max(30).required(),
-    address:
-    Joi.string().min(3).max(60).optional(),
-    role:
-    Joi.string().min(3).max(30).lowercase().required()
+  const schema = {
+      name: 
+      Joi.string().min(3).max(30).required(),
+      firstName:
+      Joi.string().min(3).max(30).required(),
+      lastName:
+      Joi.string().min(3).max(30).required(),
+      email: 
+      Joi.string().email().lowercase().required(),
+      password: 
+      Joi.string().min(8).max(80).alphanum().required(),
+      birthDate:
+      Joi.date().required().min('1-1-1900').iso(),
+      gender:
+      Joi.boolean().required(),
+      city:
+      Joi.string().min(3).max(30).required(),
+      address:
+      Joi.string().min(3).max(60).optional(),
+      role:
+      Joi.string().min(3).max(30).lowercase().required()
 
-}
+  }
 	return Joi.validate(req, schema);
 };
 exports.validateSignUp = joiValidate;
 
+function EditValidate (req) {
+  const schema = {
+
+      firstName:
+      Joi.string().min(3).max(30).required(),
+      lastName:
+      Joi.string().min(3).max(30).required(),
+      password: 
+      Joi.string().min(8).max(80).alphanum().required(),
+      birthDate:
+      Joi.date().required().min('1-1-1900').iso(),
+      gender:
+      Joi.boolean().required(),
+      city:
+      Joi.string().min(3).max(30).required(),
+      address:
+      Joi.string().min(3).max(60).optional()
+  
+  }
+    return Joi.validate(req, schema);
+  };
 
 /**
 * UserController random hash generator
@@ -93,12 +114,10 @@ const smtpTransport = nodemailer.createTransport({
  */
 exports.userSignup =   (req, res, next) => {
   const { error } = joiValidate(req.body)
-  console.log(error)
   if (error)
    return res.status(400).send({ message: error.details[0].message });
    //this object is created for LikedSongLibrary
   let userId;
-  console.log(req.body.name)
   User.find({ name: req.body.name  })
   .exec()
    .then(user => {
@@ -110,7 +129,6 @@ exports.userSignup =   (req, res, next) => {
      else {
            bcrypt.hash(req.body.password, 10, (err, hash) => {
              if (err) {
-               console.log("passwordissue")
                return res.status(500).json({
                  error: err
                });
@@ -124,10 +142,9 @@ exports.userSignup =   (req, res, next) => {
                    subject : "Please confirm your Email account",
                    html : "Welcom to FanID app,<br> Please Click on the link to verify your email.<br><a href="+link+">Click here to verify</a>"
                }
-              console.log(mailOptions);
+              
               smtpTransport.sendMail(mailOptions,async function(error, response){
               if(error){
-                 console.log(error);
                  return res.status(500).send({ msg: 'Unable to send email' });     
                  
               }else{
@@ -158,7 +175,7 @@ exports.userSignup =   (req, res, next) => {
                        process.env.JWTSECRET
                      );
                                           
-                     if(req.body.role == "manger"){
+                     if(req.body.role == "manager"){
                       user.status = "pending" ;
                      }
                      else{
@@ -168,8 +185,7 @@ exports.userSignup =   (req, res, next) => {
                      user
                        .save()
                        .then(result => {
-                         console.log(result);
-                         if(req.body.role == "manger"){
+                         if(req.body.role == "manager"){
                           res.status(201).json({
                             message: 'User created'
                           });
@@ -181,7 +197,6 @@ exports.userSignup =   (req, res, next) => {
                         }
                        })
                        .catch(err => {
-                         console.log(err);
                          res.status(500).json({
                            error: err
                          });
@@ -218,10 +233,12 @@ exports.userLogin = (req, res, next) => {
           message: 'Auth failed'
         });
       }
-      console.log(user.password)
-      console.log(req.body.password)
+      if(user.role == "manager" && user.status == "pending"){
+        return res.status(401).json({
+          message: 'request is pending'
+        });
+      }
       bcrypt.compare(req.body.password, user.password, (err, result) => {
-        console.log(err)
         if (err) {
           return res.status(401).json({
             message: 'Auth failed'
@@ -275,9 +292,7 @@ exports.userLogin = (req, res, next) => {
  */
 
 exports.userVerifyMail = (req, res, next) => {
-  console.log(req.protocol+":/"+req.get('host'));
   if((req.protocol+"://"+req.get('host'))==("http://"+req.get('host'))){
-     console.log("Domain is matched. Information is from Authentic email");
      RandHash
      .findOne({ randNo: req.query.id  })
      .exec()
@@ -287,7 +302,6 @@ exports.userVerifyMail = (req, res, next) => {
            message: 'The User doesnot Exist'
          });
        }
-         console.log("Email is verified");
           User.updateOne({_id:rand.userId},{active: true})
           .exec()
           .then(result =>{
@@ -354,10 +368,10 @@ exports.userDelete = (req, res, next) => {
 *@param {string}  res.message      the type of error /User deleted
  */
 exports.userLogout = (req, res, next) => {
-  const token = req.headers.authorization.split(" ")[1];
-  const decoded = jwt.decode(token);
-  console.log(decoded._id);
-  User.updateOne({_id:decoded._id},{token: null})
+
+  const decoded = getOID(req);
+  console.log(decoded);
+  User.updateOne({_id:decoded},{token: null})
   .exec()
   .then(result =>{
      res.status(200).json({
@@ -371,34 +385,39 @@ exports.userLogout = (req, res, next) => {
     });
   });     
 };
-/**
-* UserController  check mail exists before
-*@memberof module:controllers/userControllers
-*@function  userMailExist 
-*@param {object}  req                  Express request object
-*@param {string}  req.params.mail       search by user ID 
-*@param {object}  res 
-*@param {status}  res.status       if existx  it returns status of 409/ if success it returns status of 200 
-*@param {string}  res.message      erorr Mail exists/ or success
- */
-exports.userMailExist = function MailExist (req, res, next) {
-  User.find({ email: req.params.mail})
-    .exec()
-    .then(user => {
-      if (user.length >= 1) {
-        return res.status(409).json({
-          message: 'Mail exists'
-        });
-      } else {
-        return res.status(200).json({
-          message: 'success'
-        });
-      }
-    })
-     .catch(err => {
-      console.log(err);
-      res.status(500).json({
+exports.userEdit= (req, res, next) => {
+  const { error } = EditValidate(req.body)
+  if (error)
+   return res.status(400).send({ message: error.details[0].message });
+  const decoded = getOID(req);
+  bcrypt.hash(req.body.password, 10, (err, hash) => {
+    if (err) {
+      return res.status(500).json({
         error: err
       });
+    }
+  User.updateOne({_id:decoded},{
+  firstName:req.body.firstName,
+  lastName:req.body.lastName,
+  password: hash,
+  birthDate:req.body.birthDate,
+  gender:req.body.gender,
+  city:req.body.city,
+  address:req.body.address  
+  })
+  .exec()
+  .then(result =>{
+     res.status(200).json({
+      message: 'update success'
     });
+   })
+  .catch(err => {
+    res.status(500).json({
+      error: err
+    });
+  });    
+}); 
 };
+    
+
+
