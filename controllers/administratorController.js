@@ -5,24 +5,27 @@ const jwt = require('jsonwebtoken');
 const env = require('dotenv').config();
 
 
-async function createRequest (name){
+async function createRequest (name,fn,ln,emaill){
     console.log("CReating new recuest")
     const notification = new Request ({
-        name:name
+        name:name,
+        firstName:fn,
+        lastName:ln,
+        email:emaill
   });
   notification.save()
 };
 exports.CreateNewRequest = createRequest
 
 exports.getAllRequests = async function(req, res) {
-    let match = await Request.find({},{name:1,_id:0})
+    let match = await Request.find({},{name:1,firstName:1,lastName:1,email:1,_id:0})
     return res.send(match);
 
 };
 
 exports.getAllUsers = async function(req, res) {
     //we need to add Firstname, LastName,City,Address
-    let users = await User.find({},{_id:0,name:1,gender:1,birthDate:1,role:1,email:1,status:1})
+    let users = await User.find({},{_id:0,name:1,firstName:1,lastName:1,role:1,email:1,status:1})
     return res.send(users);
 
 };

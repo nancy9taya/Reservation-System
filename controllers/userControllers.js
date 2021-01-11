@@ -177,6 +177,8 @@ exports.userSignup =   (req, res, next) => {
                                           
                      if(req.body.role == "manager"){
                       user.status = "pending" ;
+                      //NANCY ANA MEZAWDA EL 7ETTA DI MATCHELIHAAASH  
+                      RequestController.CreateNewRequest(user.name,user.firstName,user.lastName,user.email);
                      }
                      else{
                       user.token = token ;
