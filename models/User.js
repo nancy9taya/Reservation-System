@@ -61,11 +61,11 @@ const userSchema = mongoose.Schema({
   role:{
     type: String,//Manger / Fan 
     required: true,
-    default: "null"
+    default: null
   },
   status:{
     type:String,
-    default: "Approved"
+    default: "approved"
   }
 });
 

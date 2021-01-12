@@ -23,8 +23,7 @@ const User = require('../models/User')
 const auth = async (req,res,next) => {
     try {
         const token = req.headers.authorization.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.JWTSECRET);
-        console.log(decoded)
+        const decoded = jwt.verify(token, process.env.JWTSECRET)
         const user  = await User.findOne({ _id:decoded._id});
         if(!user){
             throw new Error()
@@ -32,7 +31,6 @@ const auth = async (req,res,next) => {
         req.user = user;
         next();
     } catch (error) {
-        console.log("here")
         res.status(401).send({error:'Auth failed!'})
     }
 }
