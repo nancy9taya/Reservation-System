@@ -4,7 +4,7 @@ const router = express.Router();
 const AdministratorController = require('../controllers/administratorController');
 
 router.get('/getRequests',AdministratorController.getAllRequests);
-router.post('/approve/:username',AdministratorController.approveRequest);
+router.post('/approve/:id',AdministratorController.approveRequest);
 router.get('/getUsers',AdministratorController.getAllUsers);
 router.post('/remove/:id',AdministratorController.removeUser);
 

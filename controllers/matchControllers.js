@@ -6,6 +6,10 @@ const Event = require('../models/Event')
 exports.CreateNewEvent = async function(req, res, next) {
     //console.log("Event document Created.")
     //console.log(req.body.AwayTeam)
+    const decodedID = getOID(req);
+    const UserCheck = await User.findOne({ _id: decodedID });
+    if (UserCheck.role == 'manager' && UserCheck.status == 'approved') {    
+
     if (req.body.HomeTeam == req.body.AwayTeam)
         return res.status(500).send({ msg: 'Home Team should not be the same as the Away Team ' });     
     //console.log(req.body.MainReferee);
@@ -21,6 +25,10 @@ exports.CreateNewEvent = async function(req, res, next) {
     })
     match.save() 
     return res.status(200).json({message :'OK'})
+}
+return res.status(401).json({
+    message: 'Auth failed'
+});
 
 };
 
@@ -38,6 +46,9 @@ exports.EditExistingEvent = async function(req, res, next) {
         message: 'Edit Successful'
         });
     }
+    return res.status(401).json({
+        message: 'Auth failed'
+    });
 
 };
 
@@ -49,4 +60,7 @@ exports.FindExistingEvent = async function(req, res, next) {
         let match = await Event.findOne({MatchID:req.params.id }, {'_id':0,'MatchID':0})
         return res.send(match);
     }
+    return res.status(401).json({
+        message: 'Auth failed'
+    });
 };
