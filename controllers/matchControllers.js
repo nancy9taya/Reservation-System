@@ -52,8 +52,6 @@ exports.EditExistingEvent = async function(req, res, next) {
     const decodedID = getOID(req);
     const UserCheck = await User.findOne({ _id: decodedID });
     var checkdate = new Date(req.body.MatchDate);
-    console.log("fiiiiiiirst")
-    console.log(checkdate)
     if (UserCheck.role == 'manager' && UserCheck.status == 'approved') {    
         if(isValidDate(checkdate)){
         let MatchID = req.params.id;
