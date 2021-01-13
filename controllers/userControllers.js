@@ -261,7 +261,8 @@ exports.userLogin = (req, res, next) => {
           .then(result =>{
               return res.status(200).json({
               message: 'Auth successful',
-              token: token
+              token: token,
+              type:user.role
             });
            })
           .catch(err => {
@@ -421,6 +422,25 @@ exports.userEdit= (req, res, next) => {
     });
   });    
 }); 
+};
+
+exports.getUser=async (req,res,next)=>{
+  const decoded = getOID(req);
+  user=await User.findOne({_id:decoded},{firstName:1,lastName:1,password:1,city:1,address:1,birthDate:1,gender:1})//.select('firstName lastName password city address birthDate gender')
+  // bcrypt.compare(req.body.password, user.password, (err, result) => {
+  // console.log("WWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
+  console.log(user)
+  return res.status(200).json({
+    "firstName":user.firstName,
+    "lastName":user.lastName,
+    // "password":user.password,
+    "city":user.city,
+    "address":user.address,
+    "birthDate":user.birthDate,
+    "gender":user.gender
+  })
+
+
 };
     
 

@@ -10,5 +10,6 @@ router.delete("/:id",checkAuth, UserController.userDelete);
 router.post("/logout" ,checkAuth,  UserController.userLogout);
 router.post("/Edit" ,checkAuth,  UserController.userEdit);
 router.get("/verify" , UserController.userVerifyMail);
+router.get('/getInfo',checkAuth,UserController.getUser);
 
 module.exports = router;
