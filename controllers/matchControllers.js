@@ -46,21 +46,24 @@ exports.CreateNewEvent = async function(req, res, next) {
 
 exports.EditExistingEvent = async function(req, res, next) {
 
-    const decodedID = getOID(req);w
+    const decodedID = getOID(req);
     const UserCheck = await User.findOne({ _id: decodedID });
     if (UserCheck.role == 'manager' && UserCheck.status == 'approved') {    
         let MatchID = req.params.id;
         if (req.body.HomeTeam == req.body.AwayTeam)
         return res.status(500).send({ msg: 'Home Team should not be the same as the Away Team ' });     
         
-        var aheadOfTime = new Date(req.body.MatchDate);
-        aheadOfTime.setHours( aheadOfTime.getHours() + 2 );
-        var stadiumsReservationCheck = await  Event.find({$and: [{MatchDate:{$gte:req.body.MatchDate}},{MatchDate:{$lte:aheadOfTime}},
-            {StadiumName:{$eq:req.body.StadiumName}}]})
-        if(stadiumsReservationCheck.length>0){
-            return res.status(402).send({ msg: 'Stadium already reserved' });  
-        }
-        else{
+        const getCurrentMatch = await Event.findOne({MatchID:MatchID});
+        var checkdate = new Date(req.body.MatchDate);
+        var CurrentDate = new Date (getCurrentMatch.MatchDate);
+
+        console.log( getCurrentMatch.StadiumName == req.body.StadiumName)
+        console.log( CurrentDate.getDate()==checkdate.getDate())
+        console.log( CurrentDate.getTime()==checkdate.getTime())
+        if (getCurrentMatch.StadiumName == req.body.StadiumName
+             &&CurrentDate.getDate()==checkdate.getDate() &&
+             CurrentDate.getTime()==checkdate.getTime() ){
+            //No Check Required for stadium
             await Event
             .updateOne({MatchID:MatchID},{'HomeTeam':req.body.HomeTeam,'AwayTeam':req.body.AwayTeam,'StadiumName':req.body.StadiumName,
                                         'MatchDate':req.body.MatchDate,'MainReferee':req.body.MainReferee,
@@ -68,6 +71,23 @@ exports.EditExistingEvent = async function(req, res, next) {
             return res.status(200).json({
             message: 'Edit Successful'
             });
+        }else{
+            var aheadOfTime = new Date(req.body.MatchDate);
+            aheadOfTime.setHours( aheadOfTime.getHours() + 2 );
+            var stadiumsReservationCheck = await  Event.find({$and: [{MatchDate:{$gte:req.body.MatchDate}},{MatchDate:{$lte:aheadOfTime}},
+                {StadiumName:{$eq:req.body.StadiumName}}]})
+            if(stadiumsReservationCheck.length>0){
+                return res.status(402).send({ msg: 'Stadium already reserved' });  
+            }
+            else{
+                await Event
+                .updateOne({MatchID:MatchID},{'HomeTeam':req.body.HomeTeam,'AwayTeam':req.body.AwayTeam,'StadiumName':req.body.StadiumName,
+                                            'MatchDate':req.body.MatchDate,'MainReferee':req.body.MainReferee,
+                                            'LinesMan1':req.body.LinesMan1,'LinesMan2':req.body.LinesMan2 } );
+                return res.status(200).json({
+                message: 'Edit Successful'
+                });
+            }
         }
     }else{
         return res.status(401).json({
