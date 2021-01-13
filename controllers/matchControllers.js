@@ -19,9 +19,13 @@ exports.CreateNewEvent = async function(req, res, next) {
         console.log(req.body.MatchDate)
         var aheadOfTime = new Date(req.body.MatchDate);
         aheadOfTime.setHours( aheadOfTime.getHours() + 2 );
-        var stadiumsReservationCheck = await  Event.find({$and: [{MatchDate:{$gte:req.body.MatchDate}},{MatchDate:{$lte:aheadOfTime}},
-                                                    {StadiumName:{$eq:req.body.StadiumName}}]})
-        
+
+        var BeforeTime = new Date(req.body.MatchDate);
+        BeforeTime.setHours( BeforeTime.getHours() - 2 );
+
+         var stadiumsReservationCheck = await  Event.find({$and: [{MatchDate:{$gte:BeforeTime}},{MatchDate:{$lte:aheadOfTime}},
+                {StadiumName:{$eq:req.body.StadiumName}}]})
+           
         if(stadiumsReservationCheck.length>0){
             return res.status(402).send({ msg: 'Stadium already reserved' });  
         }
