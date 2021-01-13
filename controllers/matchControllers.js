@@ -7,7 +7,7 @@ const User = require('../models/User')
 
 exports.CreateNewEvent = async function(req, res, next) {
     //console.log("Event document Created.")
-    //console.log(req.body.AwayTeam)
+    //console.log(req.body.AwayTeam)  
     const decodedID = getOID(req);
     const UserCheck = await User.findOne({ _id: decodedID });
     if (UserCheck.role == 'manager' && UserCheck.status == 'approved') {    

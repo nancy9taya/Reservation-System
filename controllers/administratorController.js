@@ -97,6 +97,42 @@ exports.removeUser = async function(req, res) {
     } 
   
 };
+
+exports.declineRequest = async function(req, res) {
+    let DeclinedUserID = req.params.id;
+    const userOID = getOID(req);
+    const UserCheck = await User.findOne({ _id: userOID });
+    if(UserCheck){
+        if (UserCheck.role == 'administrator'){
+
+            const userRequestname = await Request.findOne({ _id:DeclinedUserID },{name:1,_id:0}); 
+            console.log(userRequestname)
+            if(userRequestname){
+                await Request.deleteOne({_id:DeclinedUserID});
+                await User.deleteOne({ name: userRequestname.name });
+                return res.status(200).json({
+                    message: 'Decline Request Successful'
+                });
+            } else{
+                return res.status(402).json({
+                message: 'No user detected'
+                });
+            }
+        }
+        else{
+            return res.status(401).json({
+            message: 'Auth failed'
+            });
+        }
+    }
+    else{
+        return res.status(401).json({
+        message: 'Auth failed'
+        });
+    } 
+
+}
+
 exports.approveRequest = async function(req, res) {
  
     let username = req.params.id;

@@ -7,7 +7,7 @@
   const matchRoutes = require('./routes/match');
   const administratorRoutes = require('./routes/administrator');
   const cors=require('cors');
-
+ const database = require('./DB/Connection')
  let db =  "mongodb+srv://arwa:projectconsultation@cluster0.kimgs.mongodb.net/ReservationSystem?retryWrites=true&w=majority";
  
  //let db="mongodb://localhost/MaestroApp"
@@ -27,7 +27,7 @@
     // console.log('db connected.. !')
     
     
- 
+    //database.connectDB();
   mongoose.connect(URI, { useNewUrlParser: true ,useUnifiedTopology: true ,useCreateIndex: true  }).
   catch(error => handleError(error));
   
