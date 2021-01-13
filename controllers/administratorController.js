@@ -20,12 +20,13 @@ async function createRequest (name,fn,ln,emaill){
 exports.CreateNewRequest = createRequest
 
 exports.getAllRequests = async function(req, res){
+    console.log("WEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
     const decodedID = getOID(req);
     const UserCheck = await User.findOne({ _id: decodedID });
     if(UserCheck){
         if (UserCheck.role == 'administrator') {
-            let match = await Request.find({},{name:1,firstName:1,lastName:1,email:1,_id:1})
-            return res.send(match);
+            let requests = await Request.find({},{name:1,firstName:1,lastName:1,email:1,_id:1,status:1})
+            return res.send(requests);
         }
         else{
             return res.status(401).json({
@@ -46,8 +47,10 @@ exports.getAllUsers = async function(req, res) {
     const decodedID = getOID(req);
     const UserCheck = await User.findOne({ _id: decodedID });
     if(UserCheck){
+        console.log("ppppppppppppppppppppppppppppppppppp")
         if (UserCheck.role == 'administrator') {     
             let users = await User.find( { "_id": { $ne: decodedID } },{_id:1,name:1,firstName:1,lastName:1,role:1,email:1,status:1})
+            console.log(users)
             return res.send(users);
         }
 

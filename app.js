@@ -10,7 +10,7 @@
  const database = require('./DB/Connection')
  let db =  "mongodb+srv://arwa:projectconsultation@cluster0.kimgs.mongodb.net/ReservationSystem?retryWrites=true&w=majority";
  
- //let db="mongodb://localhost/MaestroApp"
+//  let db="mongodb://localhost/FanApp"
   /* mongoose
     .connect(db, {
       useCreateIndex: true,
@@ -23,6 +23,7 @@
    // const migrated = up(db, client);
     //migrated.forEach(fileName => console.log('Migrated:', fileName));
     const URI =  "mongodb+srv://arwa:projectconsultation@cluster0.kimgs.mongodb.net/ReservationSystem?retryWrites=true&w=majority";
+    // const URI="mongodb://localhost/FanApp"
     // mongoose.connect(URI,{useUnifiedTopology: true, useNewUrlParser: true })
     // console.log('db connected.. !')
     

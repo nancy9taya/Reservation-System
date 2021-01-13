@@ -6,6 +6,8 @@ const User = require('../models/User')
 
 
 exports.CreateNewEvent = async function(req, res, next) {
+    console.log("Event document Created.")
+    console.log(req.body)
     //console.log("Event document Created.")
     //console.log(req.body.AwayTeam)  
     const decodedID = getOID(req);
@@ -79,16 +81,13 @@ exports.EditExistingEvent = async function(req, res, next) {
 
             var BeforeTime = new Date(req.body.MatchDate);
             BeforeTime.setHours( BeforeTime.getHours() - 2 );
-            console.log(aheadOfTime)
-            console.log(checkdate)
+            //console.log(aheadOfTime)
+            //console.log(checkdate)
             var stadiumsReservationCheck = await  Event.find({$and: [{MatchDate:{$gte:BeforeTime}},{MatchDate:{$lte:aheadOfTime}},
                 {StadiumName:{$eq:req.body.StadiumName}}]})
             console.log(stadiumsReservationCheck)
-            if(stadiumsReservationCheck.length>0){
-                return res.status(402).send({ msg: 'Stadium already reserved' });  
-            }
-            else{
-                console.log("or here")
+            
+            if(stadiumsReservationCheck.length == 1 && stadiumsReservationCheck[0].MatchID == MatchID || stadiumsReservationCheck.length==0 ){
                 await Event
                 .updateOne({MatchID:MatchID},{'HomeTeam':req.body.HomeTeam,'AwayTeam':req.body.AwayTeam,'StadiumName':req.body.StadiumName,
                                             'MatchDate':req.body.MatchDate,'MainReferee':req.body.MainReferee,
@@ -96,6 +95,9 @@ exports.EditExistingEvent = async function(req, res, next) {
                 return res.status(200).json({
                 message: 'Edit Successful'
                 });
+            } else{
+                    return res.status(402).send({ msg: 'Stadium already reserved' });  
+                
             }
         }
         }else{

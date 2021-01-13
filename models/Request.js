@@ -26,6 +26,11 @@ const requestSchema = new mongoose.Schema({
       required: true,
       minlength: 5,
       maxlength: 128
+    },
+    status:{
+      type:String,
+      default:'pending'
+
     }
 })
 
