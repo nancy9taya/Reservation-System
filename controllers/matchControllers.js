@@ -6,15 +6,15 @@ const User = require('../models/User')
 
 
 exports.CreateNewEvent = async function(req, res, next) {
-    //console.log("Event document Created.")
-    //console.log(req.body.AwayTeam)
+    console.log("Event document Created.")
+    console.log(req.body)
     const decodedID = getOID(req);
     const UserCheck = await User.findOne({ _id: decodedID });
     if (UserCheck.role == 'manager' && UserCheck.status == 'approved') {    
 
         if (req.body.HomeTeam == req.body.AwayTeam)
             return res.status(500).send({ msg: 'Home Team should not be the same as the Away Team ' });     
-        
+        console.log(req.body.MatchDate)
         var aheadOfTime = new Date(req.body.MatchDate);
         aheadOfTime.setHours( aheadOfTime.getHours() + 2 );
         var stadiumsReservationCheck = await  Event.find({$and: [{MatchDate:{$gte:req.body.MatchDate}},{MatchDate:{$lte:aheadOfTime}},
