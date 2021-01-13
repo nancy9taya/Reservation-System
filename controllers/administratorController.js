@@ -67,7 +67,7 @@ exports.getAllUsers = async function(req, res) {
 exports.removeUser = async function(req, res) {
     let RemoveUserID = req.params.id;
     //console.log(username)
-    const userOID=getOID(req);
+    const userOID = getOID(req);
     const UserCheck = await User.findOne({ _id: userOID });
     if(UserCheck){
         if (UserCheck.role == 'administrator'){
