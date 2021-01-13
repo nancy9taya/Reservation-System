@@ -46,7 +46,7 @@ exports.CreateNewEvent = async function(req, res, next) {
 
 exports.EditExistingEvent = async function(req, res, next) {
 
-    const decodedID = getOID(req);
+    const decodedID = getOID(req);w
     const UserCheck = await User.findOne({ _id: decodedID });
     if (UserCheck.role == 'manager' && UserCheck.status == 'approved') {    
         let MatchID = req.params.id;
