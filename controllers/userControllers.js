@@ -29,26 +29,26 @@ const RequestController=require('../controllers/administratorController')
 
  function joiValidate (req) {
   const schema = {
-      name: 
-      Joi.string().min(3).max(30).required(),
-      firstName:
-      Joi.string().min(3).max(30).required(),
-      lastName:
-      Joi.string().min(3).max(30).required(),
-      email: 
-      Joi.string().email().lowercase().required(),
-      password: 
-      Joi.string().min(8).max(80).alphanum().required(),
-      birthDate:
-      Joi.date().required().min('1-1-1900').iso(),
-      gender:
-      Joi.boolean().required(),
-      city:
-      Joi.string().min(3).max(30).required(),
-      address:
-      Joi.string().min(3).max(60).optional(),
-      role:
-      Joi.string().min(3).max(30).lowercase().required()
+    name: 
+    Joi.string().min(3).max(30).required(),
+    firstName:
+    Joi.string().min(3).max(30).required(),
+    lastName:
+    Joi.string().min(3).max(30).required(),
+    email: 
+    Joi.string().email().lowercase().required(),
+    password: 
+    Joi.string().min(8).max(80).required(),
+    birthDate:
+    Joi.date().required().iso(),
+    gender:
+    Joi.required(),
+    city:
+    Joi.string().min(3).max(30).required(),
+    address:
+    Joi.string().max(60).optional().allow(""),
+    role:
+    Joi.string().min(3).max(30).lowercase().required()
 
   }
 	return Joi.validate(req, schema);
@@ -114,8 +114,10 @@ const smtpTransport = nodemailer.createTransport({
  */
 exports.userSignup =   (req, res, next) => {
   const { error } = joiValidate(req.body)
-  if (error)
+  if (error){
+    console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww")
    return res.status(400).send({ message: error.details[0].message });
+  }
    //this object is created for LikedSongLibrary
   let userId;
   User.find({ name: req.body.name  })

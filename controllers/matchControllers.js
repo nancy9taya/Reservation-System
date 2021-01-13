@@ -89,3 +89,16 @@ exports.FindExistingEvent = async function(req, res, next) {
         message: 'Auth failed'
     });
 };
+
+exports.ViewAllEvents = async function(req, res, next) {
+    let match = await Event.find();
+    console.log("WEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
+    console.log(match)
+    // return res.status(409).json({
+    //     message: 'Mail exists'
+    //   });
+    // } else {
+    return res.status(200).json({
+        "match":match
+    })
+};
