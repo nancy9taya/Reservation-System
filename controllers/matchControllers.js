@@ -161,7 +161,7 @@ exports.viewAllSeats = async function(req, res, next) {
                 return res.status(200).json({
                     seats: reservedSeats,
                     cols: arrCols,
-                    rows:arrRows
+                    rows: arrRows
                    });
 
             } catch (err) {
