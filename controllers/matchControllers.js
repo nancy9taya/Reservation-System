@@ -150,7 +150,7 @@ exports.viewAllSeats = async function(req, res, next) {
     const decodedID = getOID(req);
     const UserCheck = await User.findOne({ _id: decodedID });
     const matchID = req.params.id;
-    const match = await Match.findOne({ MatchID: matchID });
+    const match = await Event.findOne({ MatchID: matchID });
     if (UserCheck.role == 'manager') {
             try {
                 const reservedSeats = match.seats;
@@ -162,7 +162,7 @@ exports.viewAllSeats = async function(req, res, next) {
                 return res.status(200).json({
                     seats: reservedSeats,
                     cols: arrCols,
-                    rows:arrRows
+                    rows: arrRows
                    });
 
             } catch (err) {
