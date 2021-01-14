@@ -6,6 +6,8 @@
   const userRoutes = require('./routes/user');
   const matchRoutes = require('./routes/match');
   const administratorRoutes = require('./routes/administrator');
+  const stadiumRoutes = require('./routes/stadium');
+  const reservationRoutes = require('./routes/reservation');
   const cors=require('cors');
  const database = require('./DB/Connection')
  let db =  "mongodb+srv://arwa:projectconsultation@cluster0.kimgs.mongodb.net/ReservationSystem?retryWrites=true&w=majority";
@@ -64,7 +66,8 @@
   app.use("/user", userRoutes);
   app.use("/match", matchRoutes);
   app.use("/adm", administratorRoutes);
-
+  app.use("/stadium", stadiumRoutes);
+  app.use("/reservation",reservationRoutes);
   
   app.use((req, res, next) => {
     const error = new Error("the request you want isn't supported yet");

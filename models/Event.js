@@ -31,7 +31,11 @@ const eventSchema = new mongoose.Schema({
     LinesMan2: {
       type: String,
       text:true
-    }
+    },
+    seats:[{
+      type:String,
+      default: []  
+      }]
 })
 
 //const event= mongoose.model('Event',eventSchema);

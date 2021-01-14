@@ -3,7 +3,7 @@ const Joi = require('joi')
 const Event = require('../models/Event')
 const getOID=require('../middleware/getOID');
 const User = require('../models/User')
-
+const Stadium= require('../models/Stadium')
 
 exports.CreateNewEvent = async function(req, res, next) {
     console.log("Event document Created.")
@@ -132,13 +132,43 @@ exports.FindExistingEvent = async function(req, res, next) {
 
 exports.ViewAllEvents = async function(req, res, next) {
     let match = await Event.find();
-    console.log("WEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
+
     console.log(match)
-    // return res.status(409).json({
-    //     message: 'Mail exists'
-    //   });
-    // } else {
+
     return res.status(200).json({
         "match":match
     })
+};
+function genCharArray(charA, charZ) {
+    var a = [], i = charA.charCodeAt(0), j = charZ.charCodeAt(0);
+    for (; i <= j; ++i) {
+        a.push(String.fromCharCode(i));
+    }
+    return a;
+}
+exports.viewAllSeats = async function(req, res, next) {
+    const decodedID = getOID(req);
+    const UserCheck = await User.findOne({ _id: decodedID });
+    const matchID = req.params.id;
+    const match = await Match.findOne({ MatchID: matchID });
+    if (UserCheck.role == 'manager') {
+            try {
+                const reservedSeats = match.seats;
+                const stadium = await Stadium.findOne({ name: match.StadiumName });
+                let arrCols = Array.from(Array(stadium.cols).keys())
+                let removed = arrCols.shift()
+                let char = genCharArray('A', 'Z');
+                let arrRows = char.slice(0, stadium.rows)
+                return res.status(200).json({
+                    seats: reservedSeats,
+                    cols: arrCols,
+                    rows:arrRows
+                   });
+
+            } catch (err) {
+                return res.status(500).json({ error: err });
+            }
+    } else {
+    return res.status(404).json({ message: "only managers can view seats" });
+           }
 };
