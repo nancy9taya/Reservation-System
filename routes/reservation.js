@@ -5,7 +5,8 @@ const reservationController = require('../controllers/reservationControllers');
 const checkAuth = require('../middleware/checkAuth');
 
 router.post("/add/:id",checkAuth,  reservationController.reserveSeat);
-router.get("/cancel/:id",checkAuth,  reservationController.CancelSeat);
+router.post("/cancel/:id",checkAuth,  reservationController.CancelSeat);
+router.get("/tickets",checkAuth,  reservationController.getTickets);
 //router.get("/viewAll",checkAuth,  reservationController.viewAll);
 
 module.exports = router;

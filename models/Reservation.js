@@ -24,7 +24,8 @@ const reservationSchema = mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  tickets:[[]]
   
 },
 { collection: 'reservations' });

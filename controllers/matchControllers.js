@@ -150,8 +150,7 @@ exports.viewAllSeats = async function(req, res, next) {
     const decodedID = getOID(req);
     const UserCheck = await User.findOne({ _id: decodedID });
     const matchID = req.params.id;
-    const match = await Match.findOne({ MatchID: matchID });
-    if (UserCheck.role == 'manager') {
+    const match = await Event.findOne({ MatchID: matchID });
             try {
                 const reservedSeats = match.seats;
                 const stadium = await Stadium.findOne({ name: match.StadiumName });
@@ -168,7 +167,4 @@ exports.viewAllSeats = async function(req, res, next) {
             } catch (err) {
                 return res.status(500).json({ error: err });
             }
-    } else {
-    return res.status(404).json({ message: "only managers can view seats" });
-           }
 };

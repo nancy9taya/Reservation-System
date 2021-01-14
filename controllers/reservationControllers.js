@@ -79,13 +79,13 @@ exports.reserveSeat = async (req, res) => {
             match: matchID,
             user: decodedID,
             seatNo:actualreserved
-
         });
         let no = actualreserved.length
         let ticketsNo = generateTickets(no)
         let allTickets = actualreserved.map(function (x, i) { 
             return [x, ticketsNo [i]]
         });
+        reservation.tickets=allTickets
         let ourReservation = await reservation.save();
         return res.status(200).json({
              message: "your reservation is done",
@@ -97,6 +97,13 @@ exports.reserveSeat = async (req, res) => {
         return res.status(500).json({ error: err });
     }
 };
+
+function deleteRow(arr, row) {
+    arr = arr.slice(0); // make copy
+    arr.splice(row - 1, 1);
+    return arr;
+ }
+
 exports.CancelSeat = async (req, res) => {
     const decodedID = getOID(req);
     const diffDays = (date, otherDate) => Math.ceil(Math.abs(date - otherDate) / (1000 * 60 * 60 * 24));
@@ -124,12 +131,22 @@ exports.CancelSeat = async (req, res) => {
                 let matchSeats = match.seats;
                 console.log(matchSeats)
                 let reserveSeats = reserve.seatNo; 
+                let tickets=reserve.tickets
                 console.log(reserveSeats)
                 let filteredmatch = matchSeats.filter(function(value, index, arr){ 
                     return value != seat;
                 });
-                
-                const modifiedMatch = await Match.updateOne({MatchID: matchID},{seats: filteredmatch });
+                let count=0;
+                let desiredRow
+                while(count<tickets.length){
+                    if(tickets[count][0]==seat){
+                        desiredRow=count
+                        break;
+                    }
+                    count++;
+                }
+                let updatedTickets=deleteRow(tickets,count+1)
+                const modifiedMatch = await Match.updateOne({MatchID: matchID},{seats: filteredmatch});
                 let filteredreserve= reserveSeats.filter(function(value, index, arr){ 
                     return value != seat;
                 });
@@ -137,7 +154,7 @@ exports.CancelSeat = async (req, res) => {
 
                 const modifiedReserve = await Reservation.remove({seatNo: seat });
                 }else{
-                const modifiedReserve = await Reservation.updateOne({seatNo: seat },{seatNo: filteredreserve });
+                const modifiedReserve = await Reservation.updateOne({seatNo: seat },{seatNo: filteredreserve,tickets:updatedTickets});
                 }
                 return res.status(200).json({
                     message: "your cancelation is done"
@@ -148,4 +165,12 @@ exports.CancelSeat = async (req, res) => {
     } catch (err) {
         return res.status(500).json({ error: err });
     }
+};
+
+exports.getTickets=async(req,res)=>{
+    const decodedID = getOID(req);
+    const tickets=await Reservation.find({user:decodedID},{_id:0,tickets:1})
+
+    return res.status(200).json({"tickets":tickets})
+
 };

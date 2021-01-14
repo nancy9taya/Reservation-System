@@ -24,6 +24,7 @@ function joiValidate(req) {
 
 
 exports.createStadium = async (req, res) => {
+    console.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
     const decodedID = getOID(req);
     const UserCheck = await User.findOne({ _id: decodedID });
     //check that the user is manager
@@ -56,9 +57,9 @@ exports.getAllStdiums = async (req, res) => {
     const decodedID = getOID(req);
     const UserCheck = await User.findOne({ _id: decodedID });
     if (UserCheck.role == 'manager') {
-        const stadiums = await Stadium.find({})
+        const stadiums = await Stadium.find({},{name: 1,_id:0})
 
-        return res.status(200).send(stadiums);
+        return res.status(200).json({"stadiums":stadiums});
     } else {
         return res.status(404).json({ message: "only managers can create stadiums" });
     }
