@@ -390,38 +390,55 @@ exports.userLogout = (req, res, next) => {
     });
   });     
 };
-exports.userEdit= (req, res, next) => {
-  const { error } = EditValidate(req.body)
-  if (error)
-   return res.status(400).send({ message: error.details[0].message });
-  const decoded = getOID(req);
-  bcrypt.hash(req.body.password, 10, (err, hash) => {
-    if (err) {
-      return res.status(500).json({
+
+
+exports.userEdit=async (req, res, next) => {
+  console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
+   
+  // {
+  //   oldpass
+  //   user:{newpass,...,....}
+  // }
+  const decodedID = getOID(req);
+  const oldPass=req.body.password;
+  const newUser=req.body.user;
+  const UserCheck = await User.findOne({ _id: decodedID });
+    bcrypt.compare(oldPass, UserCheck.password, async (err, result) => {
+      if (err) {
+        return res.status(401).json({
+          message: 'Auth failed Incorrect Password !!'
+        });
+      }
+    // const { error } = EditValidate(req.body)
+    // if (error)
+    // return res.status(400).send({ message: error.details[0].message });
+    bcrypt.hash(newUser.password, 10, (err, hash) => {
+      if (err) {
+        return res.status(500).json({
+          error: err
+        });
+      }
+    User.updateOne({_id:decodedID},{
+    firstName:newUser.firstName,
+    lastName:newUser.lastName,
+    password: hash,
+    birthDate:newUser.birthDate,
+    city:newUser.city,
+    address:newUser.address  
+    })
+    .exec()
+    .then(result =>{
+      res.status(200).json({
+        message: 'update success'
+      });
+    })
+    .catch(err => {
+      res.status(500).json({
         error: err
       });
-    }
-  User.updateOne({_id:decoded},{
-  firstName:req.body.firstName,
-  lastName:req.body.lastName,
-  password: hash,
-  birthDate:req.body.birthDate,
-  gender:req.body.gender,
-  city:req.body.city,
-  address:req.body.address  
-  })
-  .exec()
-  .then(result =>{
-     res.status(200).json({
-      message: 'update success'
-    });
-   })
-  .catch(err => {
-    res.status(500).json({
-      error: err
-    });
-  });    
-}); 
+    });    
+  }); 
+});
 };
 
 exports.getUser=async (req,res,next)=>{
